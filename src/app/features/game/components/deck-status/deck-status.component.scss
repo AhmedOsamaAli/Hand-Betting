@@ -1,0 +1,40 @@
+.deck-status {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.stat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  transition: background var(--duration-fast), border-color var(--duration-fast);
+
+  lucide-icon { color: var(--text-muted); }
+
+  &__label {
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--text-xs);
+  }
+
+  &__value {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  &--danger {
+    border-color: var(--color-crimson);
+    background: var(--color-crimson-soft);
+
+    .stat__value { color: var(--color-crimson); }
+    lucide-icon { color: var(--color-crimson); }
+  }
+}

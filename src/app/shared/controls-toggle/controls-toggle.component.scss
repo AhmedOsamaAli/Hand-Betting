@@ -1,0 +1,22 @@
+@use '../../../styles/mixins' as *;
+
+.controls-toggle {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.toggle {
+  @include button-base;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+
+  &:not(:disabled):hover {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+  }
+}

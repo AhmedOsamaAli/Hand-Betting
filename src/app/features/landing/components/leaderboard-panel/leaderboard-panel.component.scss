@@ -1,0 +1,95 @@
+@use '../../../../../styles/mixins' as *;
+
+.leaderboard {
+  @include card;
+  padding: var(--space-5);
+  width: min(420px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border-subtle);
+
+    lucide-icon { color: var(--color-gold); }
+
+    h2 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+  }
+
+  &__empty {
+    margin: 0;
+    padding: var(--space-6) 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--bg-deep);
+  transition: transform var(--duration-fast), background var(--duration-fast);
+
+  &:hover {
+    transform: translateX(2px);
+    background: var(--bg-elevated);
+  }
+
+  &__rank {
+    text-align: center;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: var(--text-base);
+  }
+
+  &__name {
+    font-weight: 600;
+    color: var(--text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__date {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  &__score {
+    font-weight: 700;
+    color: var(--color-gold);
+    font-size: var(--text-lg);
+    min-width: 36px;
+    text-align: right;
+  }
+
+  &.rank-gold .row__rank { color: var(--color-gold); }
+  &.rank-silver .row__rank { color: #c0c8d0; }
+  &.rank-bronze .row__rank { color: #cd7f32; }
+}

@@ -1,0 +1,348 @@
+@if (help.isOpen()) {
+  <div
+    class="backdrop"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="how-to-title"
+    (click)="onBackdropClick($event)"
+  >
+    <div class="modal" tabindex="-1">
+      <header class="modal__header">
+        <span class="modal__eyebrow">Guide · Step {{ currentPage() + 1 }} of {{ totalPages }}</span>
+        <button
+          type="button"
+          class="modal__close"
+          aria-label="Close how-to-play guide"
+          (click)="help.close()"
+        >
+          <svg lucideX size="20"></svg>
+        </button>
+      </header>
+
+      <div class="slide" [attr.data-page]="currentPage()">
+        @switch (currentPage()) {
+
+          @case (0) {
+            <h2 id="how-to-title" class="slide__title">Hand Betting, in under a minute</h2>
+            <p class="slide__lede">
+              You'll see <strong>{{ handSize }} Mahjong tiles</strong>. One question:
+              <em>will the next hand be higher or lower in total?</em>
+            </p>
+            <div class="example-hand example-hand--centered" aria-label="Example hand">
+              @for (tile of exampleHand; track tile.id) {
+                <app-tile [tile]="tile" size="md" [showBadge]="true" [reveal]="true" />
+              }
+            </div>
+            <p class="slide__body-text">
+              Over the next few slides you'll learn the tiles, the bet, how scoring works,
+              and how the game ends. Use <kbd>→</kbd> to flip through, <kbd>?</kbd> any time
+              to reopen this guide.
+            </p>
+          }
+
+          @case (1) {
+            <h2 id="how-to-title" class="slide__title">Meet the tiles</h2>
+            <p class="slide__body-text">
+              Three families of tiles. They look different — and one family behaves differently.
+            </p>
+
+            <div class="tile-group">
+              <h3 class="tile-group__title">
+                Number tiles
+                <span class="tile-group__hint">Value = face number (1 – 9)</span>
+              </h3>
+              <div class="tile-grid">
+                @for (item of numberTiles; track item.tile.id) {
+                  <figure class="tile-grid__item">
+                    <app-tile [tile]="item.tile" size="sm" [showBadge]="true" [reveal]="true" />
+                    <figcaption>{{ item.label }}</figcaption>
+                  </figure>
+                }
+              </div>
+            </div>
+
+            <div class="tile-group">
+              <h3 class="tile-group__title">
+                Wind tiles
+                <span class="tile-group__hint">Start at {{ baseHonorValue }} · drift each round</span>
+              </h3>
+              <div class="tile-grid">
+                @for (item of windTiles; track item.tile.id) {
+                  <figure class="tile-grid__item">
+                    <app-tile [tile]="item.tile" size="sm" [showBadge]="true" [reveal]="true" />
+                    <figcaption>{{ item.label }}</figcaption>
+                  </figure>
+                }
+              </div>
+            </div>
+
+            <div class="tile-group">
+              <h3 class="tile-group__title">
+                Dragon tiles
+                <span class="tile-group__hint">Start at {{ baseHonorValue }} · drift each round</span>
+              </h3>
+              <div class="tile-grid">
+                @for (item of dragonTiles; track item.tile.id) {
+                  <figure class="tile-grid__item">
+                    <app-tile [tile]="item.tile" size="sm" [showBadge]="true" [reveal]="true" />
+                    <figcaption>{{ item.label }}</figcaption>
+                  </figure>
+                }
+              </div>
+            </div>
+          }
+
+          @case (2) {
+            <h2 id="how-to-title" class="slide__title">Reading a hand</h2>
+            <p class="slide__body-text">
+              Each tile has a small <strong>value badge</strong> in its corner. Add the three
+              badges together — that's your hand total.
+            </p>
+            <div class="example-hand example-hand--centered" aria-label="Example hand">
+              @for (tile of exampleHand; track tile.id) {
+                <app-tile [tile]="tile" size="md" [showBadge]="true" [reveal]="true" />
+              }
+            </div>
+            <p class="example-math">
+              <span class="tabular">7 + 5 + {{ baseHonorValue }}</span>
+              =
+              <strong class="tabular">{{ exampleHandTotal }}</strong>
+            </p>
+            <ul class="key-points">
+              <li><strong>Numbers</strong> count as their face value (1 – 9).</li>
+              <li><strong>Winds &amp; Dragons</strong> all start at {{ baseHonorValue }}.</li>
+              <li>The gold pill above the hand in-game always shows the total.</li>
+            </ul>
+          }
+
+          @case (3) {
+            <h2 id="how-to-title" class="slide__title">Place your bet</h2>
+            <p class="slide__body-text">
+              You're predicting whether the <em>next</em> hand's total will be
+              <strong>higher</strong> or <strong>lower</strong> than this one.
+            </p>
+
+            <div class="bet-demo">
+              <div class="bet-demo__hand">
+                <span class="bet-demo__label">This hand</span>
+                <div class="example-hand">
+                  @for (tile of exampleHand; track tile.id) {
+                    <app-tile [tile]="tile" size="sm" [showBadge]="true" [reveal]="true" />
+                  }
+                </div>
+                <span class="bet-demo__total">Total <strong>{{ exampleHandTotal }}</strong></span>
+              </div>
+              <div class="bet-demo__arrow" aria-hidden="true">→</div>
+              <div class="bet-demo__hand">
+                <span class="bet-demo__label">Next hand</span>
+                <div class="example-hand">
+                  @for (tile of biggerHand; track tile.id) {
+                    <app-tile [tile]="tile" size="sm" [showBadge]="true" [reveal]="true" />
+                  }
+                </div>
+                <span class="bet-demo__total">Total <strong>{{ biggerHandTotal }}</strong></span>
+              </div>
+            </div>
+
+            <p class="bet-demo__verdict">
+              <span class="chip chip--higher">Bet Higher</span> would win here
+              ({{ biggerHandTotal }} &gt; {{ exampleHandTotal }}).
+              <span class="chip chip--lower">Bet Lower</span> would lose.
+            </p>
+            <p class="callout callout--info">
+              Same total = <strong>push</strong>. No score change, no tile drift.
+            </p>
+          }
+
+          @case (4) {
+            <h2 id="how-to-title" class="slide__title">The twist — tile drift</h2>
+            <p class="slide__body-text">
+              Number tiles never change. But every <strong>Wind</strong> and <strong>Dragon</strong>
+              tile in your new hand shifts after each round:
+            </p>
+            <div class="drift">
+              <div class="drift__row drift__row--win">
+                <span class="drift__chip chip chip--higher">Win</span>
+                <span class="drift__arrow">+1</span>
+                <span class="drift__text">to every Wind / Dragon in your next hand</span>
+              </div>
+              <div class="drift__row drift__row--loss">
+                <span class="drift__chip chip chip--lower">Loss</span>
+                <span class="drift__arrow">−1</span>
+                <span class="drift__text">to every Wind / Dragon in your next hand</span>
+              </div>
+            </div>
+            <p class="slide__body-text">
+              The new value <strong>sticks to that specific tile</strong>. When it goes back
+              to the deck, it remembers — so the same East Wind can come back later as a 7,
+              or a 3, or a 9.
+            </p>
+            <p class="callout callout--danger">
+              ⚠ If any tile's value reaches <strong>{{ tileMin }}</strong> or
+              <strong>{{ tileMax }}</strong>, it breaks and the game ends immediately.
+            </p>
+          }
+
+          @case (5) {
+            <h2 id="how-to-title" class="slide__title">The deck — Draw, Discard &amp; Reshuffle</h2>
+            <p class="slide__body-text">
+              The whole game runs on <strong>136 Mahjong tiles</strong> split into two piles.
+              Three numbers in the top-right tell you where every tile is right now:
+            </p>
+
+            <ul class="tour">
+              <li>
+                <span class="tour__icon"><svg lucideLayers size="16"></svg></span>
+                <div>
+                  <strong>Draw</strong> — tiles still face-down, waiting to be dealt.
+                  Starts at <strong>136</strong> and drops by {{ handSize }} every round.
+                </div>
+              </li>
+              <li>
+                <span class="tour__icon"><svg lucideTrash2 size="16"></svg></span>
+                <div>
+                  <strong>Discard</strong> — tiles you've already seen. They're not gone —
+                  they sit here until the next reshuffle puts them back in play.
+                </div>
+              </li>
+              <li>
+                <span class="tour__icon"><svg lucideRepeat size="16"></svg></span>
+                <div>
+                  <strong>Reshuffle</strong> — counter, e.g. <span class="tabular">1 / {{ maxReshuffles }}</span>.
+                  When the draw pile can't deal {{ handSize }} more tiles, the discard pile is
+                  shuffled back in <em>automatically</em> and this counter ticks up.
+                </div>
+              </li>
+            </ul>
+
+            <p class="callout callout--info">
+              You never trigger a shuffle yourself — it just happens when the deck runs low.
+              After <strong>{{ maxReshuffles }} reshuffles</strong>, the game ends on the next
+              empty deck, even if every tile is still healthy.
+            </p>
+          }
+
+          @case (6) {
+
+            <h3 class="slide__subtitle">How you score</h3>
+            <ul class="key-points">
+              <li>Each correct bet = <strong>+1</strong> point.</li>
+              <li>Wrong bet or game over = streak resets to <strong>0</strong>.</li>
+            </ul>
+
+            <h3 class="slide__subtitle">Streak bonuses</h3>
+            <ul class="bonus-list">
+              @for (bonus of streakBonuses; track bonus.length) {
+                <li>
+                  <svg lucideFlame size="14"></svg>
+                  <span class="tabular">{{ bonus.length }}-streak</span>
+                  → <strong>+{{ bonus.bonus }}</strong> bonus
+                </li>
+              }
+            </ul>
+
+            <h3 class="slide__subtitle">When the game ends</h3>
+            <ul class="key-points">
+              <li>Any tile value hits <strong>{{ tileMin }}</strong> or <strong>{{ tileMax }}</strong> (a tile "breaks").</li>
+              <li>The deck has been reshuffled <strong>{{ maxReshuffles }} times</strong> — even if all your tiles are still healthy.</li>
+            </ul>
+          }
+
+          @case (7) {
+            <h2 id="how-to-title" class="slide__title">The game screen</h2>
+            <p class="slide__body-text">
+              Here's where to look during play:
+            </p>
+            <ul class="tour">
+              <li>
+                <span class="tour__icon"><svg lucideLogOut size="16"></svg></span>
+                <div>
+                  <strong>Top-left — Exit.</strong>
+                  Quits the round and returns to the menu.
+                </div>
+              </li>
+              <li>
+                <span class="tour__icon"><svg lucideFlame size="16"></svg></span>
+                <div>
+                  <strong>Top-center — Score &amp; streak.</strong>
+                  Your current total. The flame icon and number appear once you have a streak.
+                </div>
+              </li>
+              <li>
+                <span class="tour__icon"><svg lucideLayers size="16"></svg></span>
+                <div>
+                  <strong>Top-right — Deck status.</strong>
+                  Draw / Discard / Reshuffle counters. (See the previous slide for what each one means.)
+                </div>
+              </li>
+              <li>
+                <span class="tour__icon">◇</span>
+                <div>
+                  <strong>Center — Your hand.</strong>
+                  {{ handSize }} tiles plus the gold "Hand value" pill showing the total.
+                </div>
+              </li>
+              <li>
+                <span class="tour__icon">●</span>
+                <div>
+                  <strong>Below the hand — Bet buttons.</strong>
+                  <span class="chip chip--lower">Bet Lower</span> and
+                  <span class="chip chip--higher">Bet Higher</span> reveal the next hand.
+                </div>
+              </li>
+              <li>
+                <span class="tour__icon"><svg lucideRepeat size="16"></svg></span>
+                <div>
+                  <strong>Right side — History.</strong>
+                  Every round, the thumbnail of the previous hand and whether you won or lost.
+                </div>
+              </li>
+            </ul>
+            <p class="slide__body-text slide__body-text--final">
+              You're ready. Trust your gut — and watch the drift.
+            </p>
+          }
+        }
+      </div>
+
+      <nav class="pagination" aria-label="Guide pages">
+        @for (i of pageIndices; track i) {
+          <button
+            type="button"
+            class="pagination__dot"
+            [class.pagination__dot--active]="i === currentPage()"
+            [attr.aria-label]="'Go to step ' + (i + 1)"
+            [attr.aria-current]="i === currentPage() ? 'step' : null"
+            (click)="goTo(i)"
+          ></button>
+        }
+      </nav>
+
+      <footer class="modal__footer">
+        <button
+          type="button"
+          class="btn btn--ghost"
+          [disabled]="!canGoPrev()"
+          (click)="prev()"
+        >
+          <svg lucideArrowLeft size="16"></svg>
+          Back
+        </button>
+        <p class="modal__hint">
+          <kbd>←</kbd><kbd>→</kbd> to navigate · <kbd>?</kbd> to reopen
+        </p>
+        @if (isLastPage()) {
+          <button type="button" class="btn btn--primary" (click)="help.close()">
+            <svg lucideCheck size="16"></svg>
+            Got it
+          </button>
+        } @else {
+          <button type="button" class="btn btn--primary" (click)="next()">
+            Next
+            <svg lucideArrowRight size="16"></svg>
+          </button>
+        }
+      </footer>
+    </div>
+  </div>
+}

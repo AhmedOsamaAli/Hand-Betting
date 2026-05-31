@@ -1,0 +1,19 @@
+<section class="hand" [class.hand--sm]="size === 'sm'">
+  <div class="hand__tiles">
+    @for (tile of hand; track tile.id) {
+      <div
+        class="hand__slot"
+        [style.animation-delay.ms]="animateReveal ? $index * 90 : 0"
+      >
+        <app-tile [tile]="tile" [size]="size" [reveal]="animateReveal" />
+      </div>
+    }
+  </div>
+
+  @if (total !== null && size === 'lg') {
+    <div class="hand__total" aria-live="polite">
+      <span class="hand__total-label">Hand value</span>
+      <span class="hand__total-value tabular">{{ total }}</span>
+    </div>
+  }
+</section>

@@ -1,0 +1,23 @@
+<section class="leaderboard" aria-label="Top 5 scores">
+  <header class="leaderboard__header">
+    <svg lucideTrophy size="20"></svg>
+    <h2>Leaderboard</h2>
+  </header>
+
+  @if (entries.length === 0) {
+    <p class="leaderboard__empty">
+      No scores yet — be the first to play!
+    </p>
+  } @else {
+    <ol class="leaderboard__list">
+      @for (entry of entries; track entry.playedAt + '-' + entry.name; let i = $index) {
+        <li class="row" [class]="rankClass(i)">
+          <span class="row__rank tabular">{{ i + 1 }}</span>
+          <span class="row__name">{{ entry.name }}</span>
+          <span class="row__date">{{ entry.playedAt | date: 'MMM d' }}</span>
+          <span class="row__score tabular">{{ entry.score }}</span>
+        </li>
+      }
+    </ol>
+  }
+</section>

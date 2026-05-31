@@ -1,0 +1,44 @@
+<aside class="history" aria-label="Hand history">
+  <header class="history__header">
+    <h2 class="history__title">History</h2>
+    <span class="history__count tabular">
+      @if (history.length > MAX_VISIBLE) {
+        Last {{ MAX_VISIBLE }} of {{ history.length }}
+      } @else {
+        {{ history.length }} {{ history.length === 1 ? 'hand' : 'hands' }}
+      }
+    </span>
+  </header>
+
+  @if (history.length === 0) {
+    <p class="history__empty">No hands played yet.</p>
+  } @else {
+    <ol class="history__list">
+      @for (record of recent(); track record.timestamp) {
+        <li class="history__item history__item--{{ outcomeClass(record.outcome) }}">
+          <div class="history__row">
+            <span class="history__bet">
+              @if (record.bet === 'HIGHER') {
+                <svg lucideArrowUp size="14"></svg>
+              } @else if (record.bet === 'LOWER') {
+                <svg lucideArrowDown size="14"></svg>
+              }
+            </span>
+
+            <app-hand
+              [hand]="record.hand"
+              [total]="record.total"
+              size="sm"
+              [animateReveal]="false"
+            />
+
+            <div class="history__meta">
+              <span class="history__total tabular">{{ record.total }}</span>
+              <span class="history__outcome">{{ outcomeLabel(record.outcome) }}</span>
+            </div>
+          </div>
+        </li>
+      }
+    </ol>
+  }
+</aside>

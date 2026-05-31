@@ -1,0 +1,134 @@
+<div
+  class="tile"
+  [class.tile--sm]="size === 'sm'"
+  [class.tile--md]="size === 'md'"
+  [class.tile--lg]="size === 'lg'"
+  [class.tile--reveal]="reveal"
+  [attr.aria-label]="ariaLabel()"
+  [attr.data-tile-id]="tile.id"
+  role="img"
+>
+  <svg
+    class="tile__svg"
+    viewBox="0 0 100 130"
+    preserveAspectRatio="xMidYMid meet"
+    aria-hidden="true"
+  >
+    <!-- Ivory body with bevel -->
+    <defs>
+      <linearGradient [attr.id]="'g-' + tile.id" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--color-tile-ivory)" />
+        <stop offset="100%" stop-color="var(--color-tile-ivory-edge)" />
+      </linearGradient>
+    </defs>
+    <rect
+      x="2" y="2" width="96" height="126"
+      rx="10" ry="10"
+      [attr.fill]="'url(#g-' + tile.id + ')'"
+      stroke="var(--color-tile-ivory-edge)"
+      stroke-width="1.5"
+    />
+    <!-- Inner inlay frame -->
+    <rect
+      x="8" y="10" width="84" height="110"
+      rx="6" ry="6"
+      fill="none"
+      stroke="var(--color-tile-ivory-edge)"
+      stroke-opacity="0.6"
+      stroke-width="0.6"
+    />
+
+    <!-- Face content -->
+    <g class="tile__face" [class]="suitClass()">
+      @switch (tile.kind) {
+        @case ('NUMBER') {
+          @if (tile.suit === 'CIRCLE') {
+            @for (p of circlePositions(); track $index) {
+              <g [attr.transform]="'translate(' + p.x + ' ' + p.y + ')'">
+                <circle r="9" fill="currentColor" />
+                <circle r="5.5" fill="var(--color-tile-ivory)" />
+                <circle r="3" fill="currentColor" />
+              </g>
+            }
+          } @else if (tile.suit === 'BAMBOO') {
+            @if (tile.number === 1) {
+              <!-- "One bamboo" traditionally a stylised bird; we use a ringed circle for clarity -->
+              <g transform="translate(50 65)">
+                <circle r="22" fill="currentColor" />
+                <circle r="14" fill="var(--color-tile-ivory)" />
+                <circle r="6" fill="currentColor" />
+              </g>
+            } @else {
+              @for (p of bambooPositions(); track $index) {
+                <g [attr.transform]="'translate(' + p.x + ' ' + p.y + ')'">
+                  <rect x="-3" y="-12" width="6" height="24" rx="2" fill="currentColor" />
+                  <ellipse cx="-5" cy="-13" rx="3" ry="4" fill="currentColor" />
+                  <ellipse cx="5" cy="-13" rx="3" ry="4" fill="currentColor" />
+                </g>
+              }
+            }
+          } @else if (tile.suit === 'CHARACTER') {
+            <text
+              x="50" y="48"
+              text-anchor="middle"
+              dominant-baseline="middle"
+              font-family="serif"
+              font-weight="700"
+              font-size="34"
+              fill="currentColor"
+            >{{ characterTop() }}</text>
+            <text
+              x="50" y="98"
+              text-anchor="middle"
+              dominant-baseline="middle"
+              font-family="serif"
+              font-weight="700"
+              font-size="34"
+              fill="var(--color-suit-character)"
+            >萬</text>
+          }
+        }
+        @case ('WIND') {
+          <text
+            x="50" y="68"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            font-family="serif"
+            font-weight="700"
+            font-size="62"
+            fill="currentColor"
+          >{{ windGlyph() }}</text>
+        }
+        @case ('DRAGON') {
+          @if (tile.dragon === 'WHITE') {
+            <!-- White dragon: traditional empty bordered rectangle -->
+            <rect
+              x="22" y="32" width="56" height="66"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              rx="3"
+            />
+            <line x1="22" y1="32" x2="78" y2="98" stroke="currentColor" stroke-width="2" stroke-dasharray="3 4" opacity="0.4" />
+          } @else {
+            <text
+              x="50" y="68"
+              text-anchor="middle"
+              dominant-baseline="middle"
+              font-family="serif"
+              font-weight="700"
+              font-size="62"
+              fill="currentColor"
+            >{{ dragonGlyph() }}</text>
+          }
+        }
+      }
+    </g>
+  </svg>
+
+  @if (showBadge) {
+    <span class="tile__badge tabular" [class.tile__badge--dynamic]="isNonNumber()">
+      {{ value() }}
+    </span>
+  }
+</div>

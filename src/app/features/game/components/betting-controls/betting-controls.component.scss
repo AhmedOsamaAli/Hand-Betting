@@ -1,0 +1,55 @@
+@use '../../../../../styles/mixins' as *;
+
+.betting-controls {
+  display: flex;
+  gap: var(--space-4);
+
+  @media (max-width: 640px) {
+    width: 100%;
+
+    .bet { flex: 1; }
+  }
+}
+
+.bet {
+  @include button-base;
+  min-width: 180px;
+  font-size: var(--text-lg);
+  padding: var(--space-4) var(--space-6);
+  letter-spacing: 0.02em;
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+
+  &--higher {
+    background: linear-gradient(135deg, var(--color-jade) 0%, #178d6f 100%);
+    box-shadow: 0 6px 18px var(--color-jade-soft);
+
+    &:not(:disabled):hover {
+      box-shadow: 0 10px 24px var(--color-jade-soft);
+    }
+  }
+
+  &--lower {
+    background: linear-gradient(135deg, var(--color-crimson) 0%, #b53a48 100%);
+    box-shadow: 0 6px 18px var(--color-crimson-soft);
+
+    &:not(:disabled):hover {
+      box-shadow: 0 10px 24px var(--color-crimson-soft);
+    }
+  }
+
+  /* Soft ripple highlight on press */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.35) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity var(--duration-fast) var(--ease-out);
+  }
+  &:not(:disabled):active::after {
+    opacity: 1;
+  }
+}

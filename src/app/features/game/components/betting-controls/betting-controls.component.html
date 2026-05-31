@@ -1,0 +1,23 @@
+<div class="betting-controls" role="group" aria-label="Place your bet for the next hand">
+  <button
+    type="button"
+    class="bet bet--lower"
+    [disabled]="disabled"
+    (click)="place('LOWER')"
+    aria-label="Bet that the next hand will have a lower total"
+  >
+    <svg lucideArrowDown size="22"></svg>
+    <span>Bet Lower</span>
+  </button>
+
+  <button
+    type="button"
+    class="bet bet--higher"
+    [disabled]="disabled"
+    (click)="place('HIGHER')"
+    aria-label="Bet that the next hand will have a higher total"
+  >
+    <svg lucideArrowUp size="22"></svg>
+    <span>Bet Higher</span>
+  </button>
+</div>

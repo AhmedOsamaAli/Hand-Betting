@@ -1,0 +1,37 @@
+<main class="landing">
+  <div class="landing__bg" aria-hidden="true">
+    <div class="orb orb--1"></div>
+    <div class="orb orb--2"></div>
+    <div class="orb orb--3"></div>
+  </div>
+
+  <header class="landing__topbar">
+    <span class="landing__brand">
+      <svg lucideSparkles size="18"></svg>
+      Hand Betting
+    </span>
+    <app-controls-toggle />
+  </header>
+
+  <section class="landing__hero">
+    <p class="landing__eyebrow">A Mahjong tile game of chance &amp; nerve</p>
+    <h1 class="landing__title">Bet on the next hand.</h1>
+    <p class="landing__lede">
+      Three tiles. One question — will the next hand be higher or lower? Push your
+      streak, but watch the deck. Every reshuffle brings you closer to the end.
+    </p>
+
+    <button type="button" class="cta" (click)="startGame()">
+      <svg lucidePlay size="22"></svg>
+      New Game
+    </button>
+  </section>
+
+  <section class="landing__leaderboard">
+    <app-leaderboard-panel [entries]="entries()" />
+  </section>
+
+  <footer class="landing__footer">
+    <small>Built with Angular 18 · No external state library · Open source</small>
+  </footer>
+</main>

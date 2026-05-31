@@ -1,0 +1,39 @@
+<div class="controls-toggle">
+  <button
+    type="button"
+    class="toggle"
+    aria-label="How to play"
+    title="How to play (?)"
+    (click)="help.open(); sound.play('click')"
+  >
+    <svg lucideCircleHelp size="18"></svg>
+  </button>
+
+  <button
+    type="button"
+    class="toggle"
+    [attr.aria-label]="theme.theme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'"
+    [title]="theme.theme() === 'dark' ? 'Light mode' : 'Dark mode'"
+    (click)="theme.toggle(); sound.play('click')"
+  >
+    @if (theme.theme() === 'dark') {
+      <svg lucideSun size="18"></svg>
+    } @else {
+      <svg lucideMoon size="18"></svg>
+    }
+  </button>
+
+  <button
+    type="button"
+    class="toggle"
+    [attr.aria-label]="sound.enabled() ? 'Mute sound' : 'Enable sound'"
+    [title]="sound.enabled() ? 'Mute' : 'Unmute'"
+    (click)="sound.toggle()"
+  >
+    @if (sound.enabled()) {
+      <svg lucideVolume2 size="18"></svg>
+    } @else {
+      <svg lucideVolumeX size="18"></svg>
+    }
+  </button>
+</div>

@@ -1,0 +1,67 @@
+# Deploys the Angular app to GitHub Pages on every push to `main`.
+#
+# Key gotchas baked in:
+#  - `--base-href` is set to the repo path so absolute asset URLs resolve.
+#    GitHub Actions exposes the repo name via `${{ github.event.repository.name }}`.
+#  - SPA routing on GitHub Pages requires a 404 fallback. We copy index.html
+#    to 404.html so deep links (e.g. /game) work.
+#  - The Angular 18 application builder outputs to `dist/<project>/browser`.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npx ng test --watch=false --browsers=ChromeHeadless
+
+      - name: Build (production)
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: npx ng build --configuration production --base-href "/$REPO_NAME/"
+
+      - name: SPA 404 fallback
+        run: cp dist/hand-betting-game/browser/index.html dist/hand-betting-game/browser/404.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/hand-betting-game/browser
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

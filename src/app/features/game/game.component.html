@@ -1,0 +1,68 @@
+<main class="game" [class.game--win]="lastOutcome() === 'WIN'" [class.game--loss]="lastOutcome() === 'LOSS'">
+  <header class="game__topbar">
+    <button
+      type="button"
+      class="exit-btn"
+      (click)="exitToLanding()"
+      aria-label="Exit and return to landing"
+    >
+      <svg lucideX size="18"></svg>
+      <span>Exit</span>
+    </button>
+
+    <div class="scoreboard" aria-label="Score and streak">
+      <div class="scoreboard__main">
+        <span class="scoreboard__label">Score</span>
+        <span class="scoreboard__value tabular">{{ game.score() }}</span>
+      </div>
+      @if (game.streak() > 0) {
+        <div class="scoreboard__streak" [attr.aria-label]="game.streak() + ' streak'">
+          <svg lucideFlame size="14"></svg>
+          <span class="tabular">{{ game.streak() }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="game__topbar-right">
+      <app-deck-status
+        [drawCount]="game.drawCount()"
+        [discardCount]="game.discardCount()"
+        [reshuffleCount]="game.reshuffleCount()"
+      />
+      <app-controls-toggle />
+    </div>
+  </header>
+
+  <div class="game__body">
+    <section class="game__table">
+      @if (game.currentHand(); as hand) {
+        <app-hand [hand]="hand" [total]="game.currentTotal()" size="lg" [animateReveal]="true" />
+      }
+
+      <app-betting-controls
+        [disabled]="game.status() !== 'PLAYING'"
+        (bet)="onBet($event)"
+      />
+
+      <p class="game__hint">
+        Will the next hand be <strong>higher</strong> or <strong>lower</strong>?
+      </p>
+    </section>
+
+    <app-history-panel [history]="game.history()" />
+  </div>
+
+  @if (game.status() === 'GAME_OVER' && game.gameOverReason(); as reason) {
+    <app-game-over-dialog
+      [reason]="reason"
+      [score]="game.score()"
+      [handsPlayed]="game.handsPlayed()"
+      [longestStreak]="game.longestStreak()"
+      [qualifies]="qualifies()"
+      [alreadySaved]="savedToLeaderboard()"
+      (save)="onSave($event)"
+      (playAgain)="onPlayAgain()"
+      (backToLanding)="onBackToLanding()"
+    />
+  }
+</main>

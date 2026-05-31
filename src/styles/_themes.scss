@@ -1,0 +1,48 @@
+/* =============================================================================
+ * Themes
+ * Theme-specific overrides applied via [data-theme="dark"|"light"] on <html>.
+ * Add a new theme by extending this map.
+ * ========================================================================== */
+
+:root,
+[data-theme='dark'] {
+  --bg-deep: #0a1424;
+  --bg-surface: #122036;
+  --bg-elevated: #1a2c47;
+  --bg-overlay: rgba(0, 0, 0, 0.6);
+
+  --text-primary: #f4f1ea;
+  --text-secondary: #b8c4d4;
+  --text-muted: #6f7f95;
+
+  --border-subtle: #243651;
+  --border-strong: #34495f;
+
+  --felt-pattern: radial-gradient(
+    ellipse at center,
+    #16263e 0%,
+    #0a1424 70%
+  );
+}
+
+[data-theme='light'] {
+  --bg-deep: #ecf1f5;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f7faff;
+  --bg-overlay: rgba(20, 30, 50, 0.45);
+
+  --text-primary: #102540;
+  --text-secondary: #364964;
+  --text-muted: #7a8a9e;
+
+  --border-subtle: #d4dde6;
+  --border-strong: #b6c2d1;
+
+  --color-tile-shadow: #1a253355;
+
+  --felt-pattern: radial-gradient(
+    ellipse at center,
+    #ffffff 0%,
+    #e2eaf2 80%
+  );
+}

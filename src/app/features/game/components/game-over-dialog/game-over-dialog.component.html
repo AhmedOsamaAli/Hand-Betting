@@ -1,0 +1,73 @@
+<div class="backdrop" role="dialog" aria-modal="true" aria-labelledby="game-over-title">
+  <div class="modal">
+    <header class="modal__header">
+      <svg lucideTrophy size="48" class="modal__icon"></svg>
+      <h2 id="game-over-title" class="modal__title">{{ headline() }}</h2>
+      <p class="modal__subtitle">{{ subline() }}</p>
+    </header>
+
+    @if (reason.kind === 'TILE_VALUE_LIMIT') {
+      <div class="modal__tile-callout">
+        <app-tile [tile]="reason.tile" size="lg" [showBadge]="false" [reveal]="true" />
+      </div>
+    }
+
+    <dl class="modal__stats">
+      <div class="stat">
+        <dt>Final score</dt>
+        <dd class="stat__big tabular">{{ score }}</dd>
+      </div>
+      <div class="stat">
+        <dt>Hands played</dt>
+        <dd class="tabular">{{ handsPlayed }}</dd>
+      </div>
+      <div class="stat">
+        <dt>Longest streak</dt>
+        <dd class="tabular">{{ longestStreak }}</dd>
+      </div>
+    </dl>
+
+    @if (qualifies && !alreadySaved) {
+      <form class="modal__save" (submit)="$event.preventDefault(); submit()">
+        <label for="player-name" class="modal__save-label">
+          Top 5 score! Enter your name:
+        </label>
+        <div class="modal__save-row">
+          <input
+            id="player-name"
+            type="text"
+            class="modal__input"
+            maxlength="20"
+            placeholder="Your name"
+            [ngModel]="playerName()"
+            (ngModelChange)="playerName.set($event)"
+            name="playerName"
+            autocomplete="off"
+            autofocus
+          />
+          <button
+            type="submit"
+            class="btn btn--primary"
+            [disabled]="!canSave()"
+          >
+            <svg lucideSave size="18"></svg>
+            Save
+          </button>
+        </div>
+      </form>
+    } @else if (alreadySaved) {
+      <p class="modal__saved">✓ Score saved to leaderboard.</p>
+    }
+
+    <footer class="modal__footer">
+      <button type="button" class="btn btn--secondary" (click)="backToLanding.emit()">
+        <svg lucideHouse size="18"></svg>
+        Landing
+      </button>
+      <button type="button" class="btn btn--primary" (click)="playAgain.emit()">
+        <svg lucideRotateCcw size="18"></svg>
+        Play again
+      </button>
+    </footer>
+  </div>
+</div>

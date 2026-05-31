@@ -1,0 +1,38 @@
+<div class="deck-status" role="status" aria-live="polite">
+  <div
+    class="stat"
+    title="Draw pile — tiles still face-down, waiting to be dealt"
+    [attr.aria-label]="drawCount + ' tiles left in the draw pile'"
+  >
+    <svg lucideLayers size="16"></svg>
+    <span class="stat__label">Draw</span>
+    <span class="stat__value tabular">{{ drawCount }}</span>
+  </div>
+
+  <div
+    class="stat"
+    title="Discard pile — tiles you've already seen. They come back on the next reshuffle."
+    [attr.aria-label]="discardCount + ' tiles in the discard pile'"
+  >
+    <svg lucideTrash2 size="16"></svg>
+    <span class="stat__label">Discard</span>
+    <span class="stat__value tabular">{{ discardCount }}</span>
+  </div>
+
+  <div
+    class="stat"
+    [class.stat--danger]="reshuffleCount === maxReshuffles - 1"
+    [title]="
+      'Reshuffle ' + reshuffleCount + ' of ' + maxReshuffles +
+      ' — happens automatically when the draw pile runs low. ' +
+      'After the ' + maxReshuffles + 'rd reshuffle the game ends.'
+    "
+    [attr.aria-label]="
+      reshuffleCount + ' of ' + maxReshuffles + ' reshuffles used'
+    "
+  >
+    <svg lucideRepeat size="16"></svg>
+    <span class="stat__label">Reshuffle</span>
+    <span class="stat__value tabular">{{ reshuffleCount }} / {{ maxReshuffles }}</span>
+  </div>
+</div>

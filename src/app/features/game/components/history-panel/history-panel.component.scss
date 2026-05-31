@@ -1,0 +1,115 @@
+@use '../../../../../styles/mixins' as *;
+
+.history {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  width: 320px;
+  max-height: 100%;
+  min-height: 0;
+
+  @include respond-to(lg) {
+    width: 100%;
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  &__count {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  &__empty {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+    padding: var(--space-6) 0;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  &__item {
+    padding: var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--bg-deep);
+    border-left: 3px solid var(--border-subtle);
+    animation: history-slide-in 350ms var(--ease-out) both;
+
+    &--win { border-left-color: var(--color-jade); }
+    &--loss { border-left-color: var(--color-crimson); }
+    &--push { border-left-color: var(--color-gold); }
+    &--opening { border-left-color: var(--text-muted); }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  &__bet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+
+  &__meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  &__total {
+    font-weight: 700;
+    color: var(--color-gold);
+    font-size: var(--text-base);
+  }
+
+  &__outcome {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  &__item--win &__outcome { color: var(--color-jade); }
+  &__item--loss &__outcome { color: var(--color-crimson); }
+  &__item--push &__outcome { color: var(--color-gold); }
+}
+
+@keyframes history-slide-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
