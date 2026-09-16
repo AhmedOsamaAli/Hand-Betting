@@ -6,7 +6,7 @@ export type GameStatus = 'IDLE' | 'PLAYING' | 'GAME_OVER';
 /** Reason the game ended — explains the cause to the player. */
 export type GameOverReason =
   | { kind: 'TILE_VALUE_LIMIT'; tile: Tile; value: number; bound: 'MIN' | 'MAX' }
-  | { kind: 'RESHUFFLE_LIMIT'; reshuffles: number }
+  | { kind: 'DRAW_PILE_EXHAUSTED'; exhaustions: number }
   | { kind: 'PLAYER_EXIT' };
 
 /** A single leaderboard entry persisted across sessions. */

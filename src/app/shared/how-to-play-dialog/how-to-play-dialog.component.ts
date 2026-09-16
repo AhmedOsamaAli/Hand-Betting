@@ -53,7 +53,7 @@ import { GAME_CONFIG } from '../../core/constants/game-config';
 })
 export class HowToPlayDialogComponent {
   readonly help = inject(HelpService);
-  readonly maxReshuffles = GAME_CONFIG.MAX_RESHUFFLES;
+  readonly maxDrawPileExhaustions = GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS;
   readonly handSize = GAME_CONFIG.HAND_SIZE;
   readonly baseHonorValue = GAME_CONFIG.BASE_NON_NUMBER_VALUE;
   readonly tileMin = GAME_CONFIG.TILE_VALUE_MIN;

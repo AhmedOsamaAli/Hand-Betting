@@ -39,7 +39,7 @@ export class GameOverDialogComponent {
         return this.reason.bound === 'MAX'
           ? 'Tile value maxed out'
           : 'Tile value bottomed out';
-      case 'RESHUFFLE_LIMIT':
+      case 'DRAW_PILE_EXHAUSTED':
         return 'The deck is exhausted';
       case 'PLAYER_EXIT':
         return 'You ended the game';
@@ -50,8 +50,8 @@ export class GameOverDialogComponent {
     switch (this.reason.kind) {
       case 'TILE_VALUE_LIMIT':
         return `${tileLabel(this.reason.tile)} reached ${this.reason.value}.`;
-      case 'RESHUFFLE_LIMIT':
-        return `The draw pile has been reshuffled ${this.reason.reshuffles} times — game over.`;
+      case 'DRAW_PILE_EXHAUSTED':
+        return `The draw pile ran out ${this.reason.exhaustions} times — game over.`;
       case 'PLAYER_EXIT':
         return 'Thanks for playing!';
     }

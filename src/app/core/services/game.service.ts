@@ -53,7 +53,7 @@ export class GameService {
   /** Convenience pass-throughs from `DeckService` for top-bar display. */
   readonly drawCount = this.deck.drawCount;
   readonly discardCount = this.deck.discardCount;
-  readonly reshuffleCount = this.deck.reshuffleCount;
+  readonly drawPileExhaustionCount = this.deck.drawPileExhaustionCount;
   readonly handsPlayed = computed(() => this._history().length);
 
   // ===== Lifecycle =========================================================
@@ -70,9 +70,15 @@ export class GameService {
     this._gameOverReason.set(null);
     this._status.set('PLAYING');
 
-    const opening = this.deck.draw(GAME_CONFIG.HAND_SIZE, GAME_CONFIG.MAX_RESHUFFLES);
+    const opening = this.deck.draw(
+      GAME_CONFIG.HAND_SIZE,
+      GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS,
+    );
     if (!opening) {
-      this.endGame({ kind: 'RESHUFFLE_LIMIT', reshuffles: this.deck.reshuffleCount() });
+      this.endGame({
+        kind: 'DRAW_PILE_EXHAUSTED',
+        exhaustions: this.deck.drawPileExhaustionCount(),
+      });
       return;
     }
 
@@ -106,9 +112,15 @@ export class GameService {
     if (!current) return;
 
     // 1. Draw the next hand (may trigger reshuffle).
-    const next = this.deck.draw(GAME_CONFIG.HAND_SIZE, GAME_CONFIG.MAX_RESHUFFLES);
+    const next = this.deck.draw(
+      GAME_CONFIG.HAND_SIZE,
+      GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS,
+    );
     if (!next) {
-      this.endGame({ kind: 'RESHUFFLE_LIMIT', reshuffles: this.deck.reshuffleCount() });
+      this.endGame({
+        kind: 'DRAW_PILE_EXHAUSTED',
+        exhaustions: this.deck.drawPileExhaustionCount(),
+      });
       return;
     }
 
@@ -179,9 +191,6 @@ export class GameService {
       const hit = limitHits[0];
       return { kind: 'TILE_VALUE_LIMIT', tile: hit.tile, value: hit.value, bound: hit.bound };
     },
-    // Rule 2: reshuffle cap reached. (Triggered by draw() returning null,
-    // handled in startGame/placeBet, but kept here for explicit symmetry.)
-    () => null,
   ];
 
   // ===== Helpers ==========================================================

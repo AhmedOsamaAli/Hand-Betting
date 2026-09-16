@@ -208,17 +208,17 @@
               <li>
                 <span class="tour__icon"><svg lucideRepeat size="16"></svg></span>
                 <div>
-                  <strong>Reshuffle</strong> — counter, e.g. <span class="tabular">1 / {{ maxReshuffles }}</span>.
-                  When the draw pile can't deal {{ handSize }} more tiles, the discard pile is
-                  shuffled back in <em>automatically</em> and this counter ticks up.
+                  <strong>Runouts</strong> — counter, e.g.
+                  <span class="tabular">1 / {{ maxDrawPileExhaustions }}</span>.
+                  It increases whenever the draw pile becomes empty.
                 </div>
               </li>
             </ul>
 
             <p class="callout callout--info">
-              You never trigger a shuffle yourself — it just happens when the deck runs low.
-              After <strong>{{ maxReshuffles }} reshuffles</strong>, the game ends on the next
-              empty deck, even if every tile is still healthy.
+              Before the limit, each runout automatically adds a fresh deck to the discard
+              pile and reshuffles everything. When the counter reaches
+              <strong>{{ maxDrawPileExhaustions }}</strong>, the game ends immediately.
             </p>
           }
 
@@ -244,7 +244,7 @@
             <h3 class="slide__subtitle">When the game ends</h3>
             <ul class="key-points">
               <li>Any tile value hits <strong>{{ tileMin }}</strong> or <strong>{{ tileMax }}</strong> (a tile "breaks").</li>
-              <li>The deck has been reshuffled <strong>{{ maxReshuffles }} times</strong> — even if all your tiles are still healthy.</li>
+              <li>The draw-pile runout counter reaches <strong>{{ maxDrawPileExhaustions }}</strong> — even if all your tiles are still healthy.</li>
             </ul>
           }
 

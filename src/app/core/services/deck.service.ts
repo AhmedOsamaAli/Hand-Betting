@@ -7,21 +7,21 @@ import { buildDeck } from '../utils/deck-builder.util';
  * Owns the *physical* state of the deck during a game:
  *  - the `drawPile` you draw from
  *  - the `discardPile` of played tiles
- *  - the `reshuffleCount` of how many times the draw pile has been refilled
+ *  - the number of times the draw pile has become empty
  *
  * Reshuffle policy (from the spec): when the draw pile runs out, a fresh deck
- * is added in along with the existing discard pile, the combined stack is
- * shuffled, and that becomes the new draw pile.
+ * is added to the discard pile and the combined stack is shuffled. The
+ * configured terminal exhaustion ends the game before another deck is added.
  */
 @Injectable({ providedIn: 'root' })
 export class DeckService {
   private readonly drawPile = signal<readonly Tile[]>([]);
   private readonly discardPile = signal<readonly Tile[]>([]);
-  private readonly reshuffles = signal(0);
+  private readonly drawPileExhaustions = signal(0);
 
   readonly drawCount = computed(() => this.drawPile().length);
   readonly discardCount = computed(() => this.discardPile().length);
-  readonly reshuffleCount = computed(() => this.reshuffles());
+  readonly drawPileExhaustionCount = computed(() => this.drawPileExhaustions());
 
   /** Inject a custom RNG for tests; defaults to Math.random. */
   private rng: () => number = Math.random;
@@ -29,24 +29,26 @@ export class DeckService {
   /** Begin a brand-new game state. */
   initialize(rng: () => number = Math.random): void {
     this.rng = rng;
-    this.drawPile.set(shuffle(buildDeck(), this.rng));
+    this.drawPile.set(shuffle(buildDeck(0), this.rng));
     this.discardPile.set([]);
-    this.reshuffles.set(0);
+    this.drawPileExhaustions.set(0);
   }
 
   /**
-   * Draw `count` tiles from the top of the draw pile, reshuffling on the fly
-   * if it depletes mid-draw. Returns either the drawn tiles, or `null` if a
-   * reshuffle was *needed* but the reshuffle cap has been reached.
+   * Draw `count` tiles from the top of the draw pile, refilling on the fly if
+   * it depletes mid-draw. Returns `null` when the configured exhaustion limit
+   * is reached; that terminal exhaustion does not add another fresh deck.
    */
-  draw(count: number, maxReshuffles: number): readonly Tile[] | null {
+  draw(count: number, maxExhaustions: number): readonly Tile[] | null {
     const drawn: Tile[] = [];
 
     while (drawn.length < count) {
       if (this.drawPile().length === 0) {
-        const canReshuffle = this.reshuffles() < maxReshuffles;
-        if (!canReshuffle) return null;
-        this.performReshuffle();
+        const exhaustionCount = this.drawPileExhaustions() + 1;
+        this.drawPileExhaustions.set(exhaustionCount);
+        if (exhaustionCount >= maxExhaustions) return null;
+
+        this.performReshuffle(exhaustionCount);
         // Safety: if even after reshuffle we have nothing, abort.
         if (this.drawPile().length === 0) return null;
       }
@@ -65,12 +67,11 @@ export class DeckService {
 
   /**
    * Combine the discard pile + a fresh deck, shuffle, and make it the new
-   * draw pile. Increments the reshuffle counter.
+   * draw pile. The deck generation gives every newly-created tile a unique id.
    */
-  private performReshuffle(): void {
-    const combined = [...this.discardPile(), ...buildDeck()];
+  private performReshuffle(deckGeneration: number): void {
+    const combined = [...this.discardPile(), ...buildDeck(deckGeneration)];
     this.drawPile.set(shuffle(combined, this.rng));
     this.discardPile.set([]);
-    this.reshuffles.update((n) => n + 1);
   }
 }

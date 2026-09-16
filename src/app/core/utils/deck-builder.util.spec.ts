@@ -4,11 +4,11 @@ import { isNumberTile } from '../models/tile.model';
 describe('buildDeck', () => {
   it('produces a deck of the expected size (136 tiles)', () => {
     expect(DECK_SIZE).toBe(136);
-    expect(buildDeck().length).toBe(136);
+    expect(buildDeck(0).length).toBe(136);
   });
 
   it('produces exactly 4 copies of every tile face', () => {
-    const deck = buildDeck();
+    const deck = buildDeck(0);
     const counts = new Map<string, number>();
     for (const tile of deck) {
       const key = tile.id.split('#')[0];
@@ -20,13 +20,20 @@ describe('buildDeck', () => {
   });
 
   it('gives every tile a unique id', () => {
-    const deck = buildDeck();
+    const deck = buildDeck(0);
     const ids = new Set(deck.map((t) => t.id));
     expect(ids.size).toBe(deck.length);
   });
 
+  it('uses non-overlapping ids for different deck generations', () => {
+    const firstDeckIds = new Set(buildDeck(0).map((tile) => tile.id));
+    const secondDeck = buildDeck(1);
+
+    expect(secondDeck.every((tile) => !firstDeckIds.has(tile.id))).toBeTrue();
+  });
+
   it('includes 108 number tiles, 16 winds, 12 dragons', () => {
-    const deck = buildDeck();
+    const deck = buildDeck(0);
     const numbers = deck.filter(isNumberTile);
     const winds = deck.filter((t) => t.kind === 'WIND');
     const dragons = deck.filter((t) => t.kind === 'DRAGON');

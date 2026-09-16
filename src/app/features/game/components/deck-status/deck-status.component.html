@@ -21,18 +21,19 @@
 
   <div
     class="stat"
-    [class.stat--danger]="reshuffleCount === maxReshuffles - 1"
+    [class.stat--danger]="drawPileExhaustionCount === maxDrawPileExhaustions - 1"
     [title]="
-      'Reshuffle ' + reshuffleCount + ' of ' + maxReshuffles +
-      ' — happens automatically when the draw pile runs low. ' +
-      'After the ' + maxReshuffles + 'rd reshuffle the game ends.'
+      'Draw pile runouts: ' + drawPileExhaustionCount + ' of ' + maxDrawPileExhaustions +
+      '. Before the limit, the pile is refilled and reshuffled. Reaching the limit ends the game.'
     "
     [attr.aria-label]="
-      reshuffleCount + ' of ' + maxReshuffles + ' reshuffles used'
+      drawPileExhaustionCount + ' of ' + maxDrawPileExhaustions + ' draw pile runouts'
     "
   >
     <svg lucideRepeat size="16"></svg>
-    <span class="stat__label">Reshuffle</span>
-    <span class="stat__value tabular">{{ reshuffleCount }} / {{ maxReshuffles }}</span>
+    <span class="stat__label">Runouts</span>
+    <span class="stat__value tabular">
+      {{ drawPileExhaustionCount }} / {{ maxDrawPileExhaustions }}
+    </span>
   </div>
 </div>

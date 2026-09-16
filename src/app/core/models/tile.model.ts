@@ -27,7 +27,7 @@ export type Dragon = 'RED' | 'GREEN' | 'WHITE';
 export type Tile = NumberTile | WindTile | DragonTile;
 
 export interface BaseTile {
-  /** Globally unique id across the deck instance (e.g. "BAMBOO-5#2"). */
+  /** Globally unique id across the game session (e.g. "DECK:0:NUMBER:BAMBOO:5#2"). */
   readonly id: string;
   readonly kind: TileKind;
 }

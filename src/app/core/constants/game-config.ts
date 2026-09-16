@@ -18,8 +18,8 @@ export const GAME_CONFIG = {
   /** Upper exclusive bound — reaching this ends the game. */
   TILE_VALUE_MAX: 10,
 
-  /** Player loses after the draw pile is reshuffled this many times. */
-  MAX_RESHUFFLES: 3,
+  /** Player loses when the draw pile becomes empty this many times. */
+  MAX_DRAW_PILE_EXHAUSTIONS: 3,
 
   /** Streak length thresholds → score bonus. Keep sorted ascending by length. */
   STREAK_BONUSES: [

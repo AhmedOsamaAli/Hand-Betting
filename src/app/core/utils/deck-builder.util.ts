@@ -9,17 +9,18 @@ export const NUMBER_RANGE = { min: 1, max: 9 } as const;
 
 /**
  * Build a fresh deck (no shuffling). Each tile gets a deterministic id of the
- * form `{KEY}#{copyIndex}` so the same physical tile is identifiable across
- * reshuffles within a single game session.
+ * form `DECK:{generation}:{KEY}#{copyIndex}`. The generation keeps newly-added
+ * decks distinct from physical tiles already in the discard pile.
  */
-export function buildDeck(): Tile[] {
+export function buildDeck(deckGeneration: number): Tile[] {
   const tiles: Tile[] = [];
+  const idPrefix = `DECK:${deckGeneration}`;
 
   for (const suit of NUMBER_SUITS) {
     for (let n = NUMBER_RANGE.min; n <= NUMBER_RANGE.max; n++) {
       for (let copy = 0; copy < COPIES_PER_TILE; copy++) {
         tiles.push({
-          id: `NUMBER:${suit}:${n}#${copy}`,
+          id: `${idPrefix}:NUMBER:${suit}:${n}#${copy}`,
           kind: 'NUMBER',
           suit,
           number: n,
@@ -31,7 +32,7 @@ export function buildDeck(): Tile[] {
   for (const wind of WINDS) {
     for (let copy = 0; copy < COPIES_PER_TILE; copy++) {
       tiles.push({
-        id: `WIND:${wind}#${copy}`,
+        id: `${idPrefix}:WIND:${wind}#${copy}`,
         kind: 'WIND',
         wind,
       });
@@ -41,7 +42,7 @@ export function buildDeck(): Tile[] {
   for (const dragon of DRAGONS) {
     for (let copy = 0; copy < COPIES_PER_TILE; copy++) {
       tiles.push({
-        id: `DRAGON:${dragon}#${copy}`,
+        id: `${idPrefix}:DRAGON:${dragon}#${copy}`,
         kind: 'DRAGON',
         dragon,
       });

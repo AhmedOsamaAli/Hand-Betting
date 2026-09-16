@@ -16,7 +16,7 @@ import { GAME_CONFIG } from '../../../../core/constants/game-config';
 export class DeckStatusComponent {
   @Input({ required: true }) drawCount = 0;
   @Input({ required: true }) discardCount = 0;
-  @Input({ required: true }) reshuffleCount = 0;
+  @Input({ required: true }) drawPileExhaustionCount = 0;
 
-  readonly maxReshuffles = GAME_CONFIG.MAX_RESHUFFLES;
+  readonly maxDrawPileExhaustions = GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS;
 }

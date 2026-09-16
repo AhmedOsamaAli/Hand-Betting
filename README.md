@@ -4,7 +4,7 @@
 
 ![Angular 18](https://img.shields.io/badge/Angular-18-DD0031?logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-45%20passing-2EA043)
+![Tests](https://img.shields.io/badge/tests-47%20passing-2EA043)
 ![Bundle](https://img.shields.io/badge/initial-97%20kB%20gzip-blue)
 
 Three tiles, one question — **will the next hand be higher or lower?** Build a streak,
@@ -35,8 +35,8 @@ Requires **Node 22** and **npm 10+**.
 | 3 | The hand's **total** is the sum of all three tile values.                                                                                  |
 | 4 | Place a bet: **Higher** or **Lower** — relative to the *current* total. (Same total = **Push**, no change.)                                 |
 | 5 | On reveal: every **non-number** tile in the hand has its value adjusted by ±1 (win: it moves *toward* the bet; loss: *away*).               |
-| 6 | A **specific tile's value** sticks to that physical tile — even after it returns to the deck and reappears later.                          |
-| 7 | **Game over** when *any* tile in the current hand reaches **0** or **10**, **or** the deck is reshuffled for the **3rd** time.              |
+| 6 | A **specific tile's value** sticks to that physical tile — even after it returns to the deck and reappears later. Fresh decks use distinct tile IDs. |
+| 7 | **Game over** when *any* tile in the current hand reaches **0** or **10**, **or** the draw pile runs out for the **3rd** time.              |
 | 8 | **Score**: +1 per win. **Streak bonuses**: +2 at 3-win, +5 at 5-win, +15 at 10-win.                                                        |
 | 9 | Top **5** scores persist locally; player is prompted to save a name on a qualifying run.                                                   |
 
@@ -85,7 +85,7 @@ src/
 | **Strategy pattern for bets**     | `evaluateBet` is a pure function; adding "equal" or "exact" bets is a one-liner.                          |
 | **Predicate array for game-over** | `gameOverRules: GameOverRule[]` — new end conditions add without touching existing code (OCP).            |
 | **Injectable RNG**                | `GameService.startGame(rng?)` accepts a seedable RNG; tests use **Mulberry32** for full determinism.       |
-| **Per-instance tile values**      | A `Map<tileId, number>` enforces "a specific tile's value sticks to *that* tile" — even across reshuffles. |
+| **Per-instance tile values**      | A `Map<tileId, number>` plus generation-scoped deck IDs keeps each physical tile's value independent across reshuffles. |
 | **Lazy routes**                   | Landing ships **2.6 kB**, game route **13.9 kB**, how-to-play **6.6 kB** (gzipped). Initial paint stays under 100 kB.             |
 | **Strict TS + no `any`**          | Discriminated unions everywhere (`Tile`, `GameOverReason`, `BetOutcome`).                                  |
 
@@ -120,7 +120,7 @@ into the templates and plays sound effects in response to state transitions.
 
 ## Testing
 
-**45 unit tests** cover the pure-logic core (deck, tile-value, leaderboard, game
+**47 unit tests** cover the pure-logic core (deck, tile-value, leaderboard, game
 service end-to-end with a seeded RNG, shuffle invariants).
 
 ```bash
