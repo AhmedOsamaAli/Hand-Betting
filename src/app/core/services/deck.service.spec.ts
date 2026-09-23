@@ -32,42 +32,47 @@ describe('DeckService', () => {
     expect(service.discardCount()).toBe(3);
   });
 
-  it('records an exhaustion and refills when the draw pile first runs out', () => {
-    drainAndDiscard(service);
-    expect(service.drawCount()).toBe(0);
+  it('records an exhaustion and refills as soon as the last tile is drawn', () => {
+    const tiles = service.draw(DECK_SIZE, GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS);
 
-    const next = service.draw(1, GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS);
-
-    expect(next).not.toBeNull();
+    expect(tiles?.length).toBe(DECK_SIZE);
     expect(service.drawPileExhaustionCount()).toBe(1);
-    expect(service.drawCount()).toBe(DECK_SIZE * 2 - 1);
+    expect(service.drawCount()).toBe(DECK_SIZE);
   });
 
   it('keeps physical tile ids unique when a fresh deck is added', () => {
-    drainAndDiscard(service);
+    const discarded = service.draw(3, GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS)!;
+    service.discard(discarded);
+    service.draw(DECK_SIZE - 3, GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS);
 
     const combinedDeck = service.draw(
-      DECK_SIZE * 2,
+      DECK_SIZE + discarded.length,
       GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS,
     );
 
     expect(combinedDeck).not.toBeNull();
-    expect(new Set(combinedDeck!.map((tile) => tile.id)).size).toBe(DECK_SIZE * 2);
+    expect(new Set(combinedDeck!.map((tile) => tile.id)).size).toBe(
+      DECK_SIZE + discarded.length,
+    );
   });
 
-  it('returns null on the third draw-pile exhaustion without adding another deck', () => {
+  it('returns null immediately when drawing the last tile causes the third exhaustion', () => {
     for (let expectedExhaustions = 1; expectedExhaustions < 3; expectedExhaustions++) {
-      drainAndDiscard(service);
-      const next = service.draw(1, GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS);
+      const tiles = service.draw(
+        service.drawCount(),
+        GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS,
+      );
 
-      expect(next).not.toBeNull();
-      service.discard(next!);
+      expect(tiles).not.toBeNull();
+      service.discard(tiles!);
       expect(service.drawPileExhaustionCount()).toBe(expectedExhaustions);
     }
 
-    drainAndDiscard(service);
     const discardCount = service.discardCount();
-    const next = service.draw(1, GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS);
+    const next = service.draw(
+      service.drawCount(),
+      GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS,
+    );
 
     expect(next).toBeNull();
     expect(service.drawPileExhaustionCount()).toBe(3);
@@ -75,15 +80,6 @@ describe('DeckService', () => {
     expect(service.discardCount()).toBe(discardCount);
   });
 });
-
-function drainAndDiscard(service: DeckService): void {
-  const remaining = service.drawCount();
-  if (remaining === 0) return;
-
-  const tiles = service.draw(remaining, GAME_CONFIG.MAX_DRAW_PILE_EXHAUSTIONS);
-  expect(tiles).not.toBeNull();
-  service.discard(tiles!);
-}
 
 function sequentialRng(): () => number {
   let i = 0;

@@ -9,8 +9,8 @@ export type TileSize = 'sm' | 'md' | 'lg';
  * Mahjong tile renderer.
  *
  * - 100% programmatic SVG (zero asset weight, crisp at any size).
- * - Pure presentation: derives its displayed value from `TileValueService`
- *   so dynamic scaling on non-number tiles is reflected automatically.
+ * - Uses the live `TileValueService` value unless a historical snapshot is
+ *   supplied by the parent.
  * - Three sizes: `sm` (history thumbnails), `md` (default), `lg` (current hand).
  *
  * Faces are split into small, named templates inside this file so that adding
@@ -26,6 +26,8 @@ export type TileSize = 'sm' | 'md' | 'lg';
 export class TileComponent {
   @Input({ required: true }) tile!: Tile;
   @Input() size: TileSize = 'md';
+  /** Historical views can supply a snapshot instead of the tile's live value. */
+  @Input() value: number | null = null;
   /** When false, the value badge is hidden (used for shuffle animations etc.) */
   @Input() showBadge = true;
   /** When true, plays a subtle reveal/flip animation. */
@@ -33,7 +35,6 @@ export class TileComponent {
 
   private readonly tileValues = inject(TileValueService);
 
-  readonly value = computed(() => this.tileValues.getValue(this.tile));
   readonly isNonNumber = computed(() => !isNumberTile(this.tile));
 
   readonly suitClass = computed(() => {
@@ -47,7 +48,13 @@ export class TileComponent {
     }
   });
 
-  readonly ariaLabel = computed(() => `${tileLabel(this.tile)} (value ${this.value()})`);
+  displayValue(): number {
+    return this.value ?? this.tileValues.getValue(this.tile);
+  }
+
+  ariaLabel(): string {
+    return `${tileLabel(this.tile)} (value ${this.displayValue()})`;
+  }
 
   /** Dot positions for the Circle suit (Pinzi) — 100×130 face viewport. */
   readonly circlePositions = computed<{ x: number; y: number }[]>(() => {

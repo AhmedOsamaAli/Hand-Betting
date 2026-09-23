@@ -5,7 +5,12 @@
         class="hand__slot"
         [style.animation-delay.ms]="animateReveal ? $index * 90 : 0"
       >
-        <app-tile [tile]="tile" [size]="size" [reveal]="animateReveal" />
+        <app-tile
+          [tile]="tile"
+          [size]="size"
+          [value]="values ? values[$index] : null"
+          [reveal]="animateReveal"
+        />
       </div>
     }
   </div>

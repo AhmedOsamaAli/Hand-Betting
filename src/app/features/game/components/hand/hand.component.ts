@@ -18,6 +18,8 @@ import { Hand } from '../../../../core/models/hand.model';
 })
 export class HandComponent {
   @Input({ required: true }) hand!: Hand;
+  /** Optional values captured with a historical hand. */
+  @Input() values: readonly number[] | null = null;
   @Input() total: number | null = null;
   @Input() size: TileSize = 'lg';
   @Input() animateReveal = true;

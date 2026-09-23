@@ -27,13 +27,34 @@
 
             <app-hand
               [hand]="record.hand"
+              [values]="record.values"
               [total]="record.total"
               size="sm"
               [animateReveal]="false"
             />
 
             <div class="history__meta">
-              <span class="history__total tabular">{{ record.total }}</span>
+              <span
+                class="history__total tabular"
+                [title]="
+                  record.comparisonTotal === record.total
+                    ? 'Hand total: ' + record.total
+                    : 'Bet evaluated at ' + record.comparisonTotal +
+                      '; tile drift changed the hand to ' + record.total
+                "
+                [attr.aria-label]="
+                  record.comparisonTotal === record.total
+                    ? 'Hand total ' + record.total
+                    : 'Bet evaluated at ' + record.comparisonTotal +
+                      ', then tile drift changed the hand to ' + record.total
+                "
+              >
+                <span>{{ record.comparisonTotal }}</span>
+                @if (record.comparisonTotal !== record.total) {
+                  <span class="history__drift-arrow" aria-hidden="true">→</span>
+                  <span>{{ record.total }}</span>
+                }
+              </span>
               <span class="history__outcome">{{ outcomeLabel(record.outcome) }}</span>
             </div>
           </div>

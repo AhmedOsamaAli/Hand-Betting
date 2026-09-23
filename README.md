@@ -4,7 +4,7 @@
 
 ![Angular 18](https://img.shields.io/badge/Angular-18-DD0031?logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-47%20passing-2EA043)
+![Tests](https://img.shields.io/badge/tests-53%20passing-2EA043)
 ![Bundle](https://img.shields.io/badge/initial-97%20kB%20gzip-blue)
 
 Three tiles, one question — **will the next hand be higher or lower?** Build a streak,
@@ -34,11 +34,15 @@ Requires **Node 22** and **npm 10+**.
 | 2 | A tile's **starting value** is its number (1–9 for suit tiles) or **5** for winds/dragons.                                                 |
 | 3 | The hand's **total** is the sum of all three tile values.                                                                                  |
 | 4 | Place a bet: **Higher** or **Lower** — relative to the *current* total. (Same total = **Push**, no change.)                                 |
-| 5 | On reveal: every **non-number** tile in the hand has its value adjusted by ±1 (win: it moves *toward* the bet; loss: *away*).               |
+| 5 | On reveal: every **non-number** tile in the hand has its value adjusted by ±1 (**win: +1**, **loss: −1**, push: unchanged).                 |
 | 6 | A **specific tile's value** sticks to that physical tile — even after it returns to the deck and reappears later. Fresh decks use distinct tile IDs. |
 | 7 | **Game over** when *any* tile in the current hand reaches **0** or **10**, **or** the draw pile runs out for the **3rd** time.              |
 | 8 | **Score**: +1 per win. **Streak bonuses**: +2 at 3-win, +5 at 5-win, +15 at 10-win.                                                        |
 | 9 | Top **5** scores persist locally; player is prompted to save a name on a qualifying run.                                                   |
+
+Bet outcomes use the next hand's values **before** that hand's Win/Loss drift is
+applied. When drift changes the total, History shows `comparison → current` so
+the result and the value carried into the next bet are both visible.
 
 All constants live in [`src/app/core/constants/game-config.ts`](src/app/core/constants/game-config.ts) — tune freely.
 
@@ -120,7 +124,7 @@ into the templates and plays sound effects in response to state transitions.
 
 ## Testing
 
-**47 unit tests** cover the pure-logic core (deck, tile-value, leaderboard, game
+**53 unit tests** cover the pure-logic core (deck, tile-value, leaderboard, game
 service end-to-end with a seeded RNG, shuffle invariants).
 
 ```bash

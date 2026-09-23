@@ -84,13 +84,7 @@ export class GameService {
 
     this._currentHand.set(opening);
     this._history.set([
-      {
-        hand: opening,
-        total: this.tileValues.totalOf(opening),
-        bet: null,
-        outcome: null,
-        timestamp: Date.now(),
-      },
+      this.createHandRecord(opening, null, null, this.tileValues.totalOf(opening)),
     ]);
   }
 
@@ -140,17 +134,10 @@ export class GameService {
     // 5. Update score & streak.
     this.applyOutcomeToScore(outcome);
 
-    // 6. Append to history (use the post-scaling total for accuracy).
-    const finalTotal = this.tileValues.totalOf(next);
+    // 6. Append an immutable snapshot of the post-scaling hand.
     this._history.update((h) => [
       ...h,
-      {
-        hand: next,
-        total: finalTotal,
-        bet,
-        outcome,
-        timestamp: Date.now(),
-      },
+      this.createHandRecord(next, bet, outcome, nextTotal),
     ]);
 
     // 7. Check game-over conditions.
@@ -194,6 +181,24 @@ export class GameService {
   ];
 
   // ===== Helpers ==========================================================
+
+  private createHandRecord(
+    hand: Hand,
+    bet: Bet | null,
+    outcome: BetOutcome | null,
+    comparisonTotal: number,
+  ): HandRecord {
+    const values = hand.map((tile) => this.tileValues.getValue(tile));
+    return {
+      hand,
+      values,
+      comparisonTotal,
+      total: values.reduce((sum, value) => sum + value, 0),
+      bet,
+      outcome,
+      timestamp: Date.now(),
+    };
+  }
 
   private applyOutcomeToScore(outcome: BetOutcome): void {
     if (outcome === 'WIN') {

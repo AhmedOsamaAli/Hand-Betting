@@ -43,18 +43,13 @@ export class DeckService {
     const drawn: Tile[] = [];
 
     while (drawn.length < count) {
-      if (this.drawPile().length === 0) {
-        const exhaustionCount = this.drawPileExhaustions() + 1;
-        this.drawPileExhaustions.set(exhaustionCount);
-        if (exhaustionCount >= maxExhaustions) return null;
+      if (this.drawPile().length === 0 && !this.handleExhaustion(maxExhaustions)) return null;
 
-        this.performReshuffle(exhaustionCount);
-        // Safety: if even after reshuffle we have nothing, abort.
-        if (this.drawPile().length === 0) return null;
-      }
       const pile = [...this.drawPile()];
       drawn.push(pile.pop()!);
       this.drawPile.set(pile);
+
+      if (pile.length === 0 && !this.handleExhaustion(maxExhaustions)) return null;
     }
 
     return drawn;
@@ -73,5 +68,17 @@ export class DeckService {
     const combined = [...this.discardPile(), ...buildDeck(deckGeneration)];
     this.drawPile.set(shuffle(combined, this.rng));
     this.discardPile.set([]);
+  }
+
+  /** Record a runout, then refill unless this is the terminal exhaustion. */
+  private handleExhaustion(maxExhaustions: number): boolean {
+    if (this.drawPileExhaustions() >= maxExhaustions) return false;
+
+    const exhaustionCount = this.drawPileExhaustions() + 1;
+    this.drawPileExhaustions.set(exhaustionCount);
+    if (exhaustionCount >= maxExhaustions) return false;
+
+    this.performReshuffle(exhaustionCount);
+    return this.drawPile().length > 0;
   }
 }

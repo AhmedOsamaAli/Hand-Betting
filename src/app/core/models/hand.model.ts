@@ -15,6 +15,11 @@ export type BetOutcome = 'WIN' | 'LOSS' | 'PUSH';
  */
 export interface HandRecord {
   readonly hand: Hand;
+  /** Value of each tile at the moment this hand completed. */
+  readonly values: readonly number[];
+  /** Total used to evaluate the bet, before this hand's tile drift. */
+  readonly comparisonTotal: number;
+  /** Total after this hand's tile drift; used for the next bet. */
   readonly total: number;
   /** Bet placed BEFORE this hand was revealed; null for the very first hand. */
   readonly bet: Bet | null;
